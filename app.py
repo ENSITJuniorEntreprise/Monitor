@@ -57,7 +57,7 @@ def fetch_heartbeat():
                 logger.info(f"Heartbeat data received from <{name}> ({url}): {data}")
             except requests.RequestException as e:
                 logger.error(f"Error fetching heartbeat from <{name}> ({url}): {e}")
-        time.sleep(3)  # Wait 3 seconds before next cycle
+        time.sleep(30)  # Wait 3 seconds before next cycle
 
 def start_heartbeat_thread():
     """
