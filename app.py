@@ -1,3 +1,4 @@
+import re
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import requests
@@ -45,6 +46,10 @@ def start_heartbeat_thread():
 @app.get('/')
 def index():
     return jsonify({"message": "Welcome to the Monitor Service!"})
+
+@app.get('/api/heart-beat')
+def heart_beat():
+    return jsonify({"status": "OK"})
 
 # Start the background thread when the app is loaded
 start_heartbeat_thread()
