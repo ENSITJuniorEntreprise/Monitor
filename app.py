@@ -8,8 +8,13 @@ import logging
 app = Flask(__name__)
 CORS(app)
 
+# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Global flag to ensure the thread starts only once
+heartbeat_thread_started = False
+thread_lock = threading.Lock()
 
 def fetch_heartbeat():
     """
@@ -23,21 +28,26 @@ def fetch_heartbeat():
             logger.info(f"Heartbeat data received: {data}")
         except requests.RequestException as e:
             logger.error(f"Error fetching heartbeat: {e}")
-        time.sleep(30) 
+        time.sleep(30)
+
+def start_heartbeat_thread():
+    """
+    Start the heartbeat thread if it hasn't been started yet
+    """
+    global heartbeat_thread_started
+    with thread_lock:
+        if not heartbeat_thread_started:
+            heartbeat_thread = threading.Thread(target=fetch_heartbeat, daemon=True)
+            heartbeat_thread.start()
+            heartbeat_thread_started = True
+            logger.info("Heartbeat thread started")
 
 @app.get('/')
 def index():
     return jsonify({"message": "Welcome to the Monitor Service!"})
 
-@app.get('/api/heart-beat')
-def send_heartbeat():
-    """
-    Endpoint to send heartbeat data
-    """
-    return jsonify({"status": "ok"}), 200
+# Start the background thread when the app is loaded
+start_heartbeat_thread()
 
 if __name__ == '__main__':
-    heartbeat_thread = threading.Thread(target=fetch_heartbeat, daemon=True)
-    heartbeat_thread.start()
-    
     app.run(debug=True)
