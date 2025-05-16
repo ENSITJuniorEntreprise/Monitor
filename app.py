@@ -23,11 +23,18 @@ def fetch_heartbeat():
             logger.info(f"Heartbeat data received: {data}")
         except requests.RequestException as e:
             logger.error(f"Error fetching heartbeat: {e}")
-        time.sleep(3) 
+        time.sleep(30) 
 
 @app.get('/')
 def index():
     return jsonify({"message": "Welcome to the Monitor Service!"})
+
+@app.get('/api/heart-beat')
+def send_heartbeat():
+    """
+    Endpoint to send heartbeat data
+    """
+    return jsonify({"status": "ok"}), 200
 
 if __name__ == '__main__':
     heartbeat_thread = threading.Thread(target=fetch_heartbeat, daemon=True)
