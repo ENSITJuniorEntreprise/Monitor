@@ -28,7 +28,7 @@ while True:
     name = os.getenv(f'WEBSITE_NAME{index}')
     if not url:  # Stop when no more WEBSITE_URLX is found
         break
-    websites.append({'url': url.rstrip('/') + '/api/heart-beat', 'name': name or f'website{index}'})
+    websites.append({'url': url.rstrip('/') + '/', 'name': name or f'website{index}'})
     index += 1
 
 # Validate that at least one website is configured
